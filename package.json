@@ -6,5 +6,18 @@
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.6.1"
-  }
+  },
+  "name": "medimatrix_api",
+  "description": "This is API server for Berry VMI-6, ASD and other tests digital healthcare platform",
+  "version": "1.0.0",
+  "main": "api.js",
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "scripts": {
+    "start": "nodemon api.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }
