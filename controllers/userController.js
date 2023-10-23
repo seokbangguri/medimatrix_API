@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const pool = require("../dbPool");
+const pool = require("../server");
 const jwt = require('jsonwebtoken');
 const jwtSecret = process.env.JWT_SECRET;
 const saltRounds = parseInt(process.env.HASH_SALT);
@@ -13,13 +13,13 @@ function generateToken(payload) {
 async function verifyToken(req, res) {
   try {
     const { token } = req.body;
-    if(token == null) {
-      res.status(400).json({error: "token이 없습니다."});
+    if (token == null) {
+      res.status(400).json({ error: "token이 없습니다." });
       return;
     } else {
       const decoded = jwt.verify(token, jwtSecret);
-      const {email, name, hospitalName, role, exp, iat} = decoded;
-      res.status(200).json({decoded: {email, name, hospitalName, role, exp, iat}});
+      const { email, name, hospitalName, role, exp, iat } = decoded;
+      res.status(200).json({ decoded: { email, name, hospitalName, role, exp, iat } });
     }
   } catch (error) {
     // 토큰이 만료되었거나 유효하지 않은 경우에 대한 에러 처리
@@ -37,7 +37,7 @@ async function signup(req, res) {
   // 회원가입 로직 구현
   try {
     const { name, email, password, hospitalName, phoneNumber, role } = req.body;
-    
+
     // 필드 값이 null 또는 undefined인 경우 에러 반환
     if (name == null || email == null || password == null || hospitalName == null || phoneNumber == null || role == null) {
       res.status(400).json({ error: "필수 정보가 누락되었습니다." });
@@ -95,9 +95,9 @@ async function signin(req, res) {
   // 로그인 로직 구현
   try {
     const { email, password } = req.body;
-    
+
     // 필드 값이 null 또는 undefined인 경우 에러 반환
-    if ( email == null || password == null ) {
+    if (email == null || password == null) {
       res.status(400).json({ error: "필수 정보가 누락되었습니다." });
       return;
     }
@@ -123,11 +123,11 @@ async function signin(req, res) {
     if (therapists.length > 0) {
       // therapists 테이블에서 사용자 발견
       user = therapists[0];
-	    role = 'therapists';
+      role = 'therapists';
     } else if (administrators.length > 0) {
       // administrators 테이블에서 사용자 발견
       user = administrators[0];
-	    role = 'administrators';
+      role = 'administrators';
     }
 
     if (user) {
@@ -167,7 +167,7 @@ async function loadUserData(req, res) {
   try {
     const { email, role } = req.body;
     // 필드 값이 null 또는 undefined인 경우 에러 반환
-    if ( email == null || role == null ) {
+    if (email == null || role == null) {
       res.status(400).json({ error: "필수 정보가 누락되었습니다." });
       return;
     }
@@ -216,7 +216,7 @@ async function updateData(req, res) {
   try {
     const { email, name, hospitalName, phoneNumber, role } = req.body;
     // 필드 값이 null 또는 undefined인 경우 에러 반환
-    if (name == null || email == null || hospitalName == null || phoneNumber == null || role == null ) {
+    if (name == null || email == null || hospitalName == null || phoneNumber == null || role == null) {
       res.status(400).json({ error: "필수 정보가 누락되었습니다." });
       return;
     }
@@ -234,12 +234,12 @@ async function updateData(req, res) {
 
     if (result.affectedRows === 1) {
       // 업데이트가 성공한 경우
-        const userData = {
-          name: name,
-          email: email,
-          hospitalName: hospitalName,
-          role: role
-        }
+      const userData = {
+        name: name,
+        email: email,
+        hospitalName: hospitalName,
+        role: role
+      }
       const token = generateToken(userData);
       res.status(200).json({ message: "사용자 데이터 업데이트 성공", token: token });
     } else {
@@ -336,7 +336,7 @@ async function patientE(req, res) {
       // 사용자를 찾을 수 없을 경우 적절한 응답을 보냅니다.// 데이터베이스에 회원 정보 추가
       const [result] = await connection.execute(
         `INSERT INTO patients (patientNo, name, sex, hospital, therapists) VALUES (?,?,?,?,?)`,
-        [id,name,sex,hospital,therapists]
+        [id, name, sex, hospital, therapists]
       );
       res.status(201).json({ message: "신규환자 입니다." });
     }
@@ -354,7 +354,7 @@ async function patientL(req, res) {
   try {
     const { name, email, hospital } = req.body;
     // 필드 값이 null 또는 undefined인 경우 에러 반환
-    if (name == null || email == null || hospital == null ) {
+    if (name == null || email == null || hospital == null) {
       res.status(400).json({ error: "필수 정보가 누락되었습니다." });
       return;
     }
@@ -390,7 +390,7 @@ async function loadPatientData(req, res) {
   try {
     const { id, hospital } = req.body;
     // 필드 값이 null 또는 undefined인 경우 에러 반환
-    if ( id == null || hospital == null ) {
+    if (id == null || hospital == null) {
       res.status(400).json({ error: "필수 정보가 누락되었습니다." });
       return;
     }
@@ -400,7 +400,7 @@ async function loadPatientData(req, res) {
 
     const [result] = await connection.execute(
       "SELECT * FROM testData WHERE patientNo = ? AND hospital = ?",
-      [id,hospital]
+      [id, hospital]
     )
 
     if (result.length >= 0) {
