@@ -5,7 +5,7 @@ const router = express.Router();
 const patientController = require('../controllers/patientController');
 
 router.post('/patientexist', patientController.patientE);
-router.get('/patientlist', patientController.patientL);
-router.get('/patientdata', patientController.loadPatientData);
+router.post('/patientlist', patientController.patientL);
+router.post('/patientdata', patientController.loadPatientData);
 
 module.exports = router;
