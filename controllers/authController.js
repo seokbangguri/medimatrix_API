@@ -1,10 +1,11 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const pool = require('../server');
+const pool = require('../dbPool');
 
 const jwtSecret = process.env.JWT_SECRET;
 const saltRounds = parseInt(process.env.HASH_SALT, 10);
 
+console.log(pool);
 // 토큰 생성
 const generateToken = (payload) =>
   // payload는 토큰에 담을 정보 (예: 사용자 정보 등)

@@ -1,4 +1,4 @@
-const pool = require('../server');
+const pool = require('../dbPool');
 
 const generateToken = require('./authController');
 

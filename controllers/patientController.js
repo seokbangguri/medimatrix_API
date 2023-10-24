@@ -1,4 +1,4 @@
-const pool = require('../server');
+const pool = require('../dbPool');
 
 // 환자 정보등록
 exports.patientE = async (req, res) => {
