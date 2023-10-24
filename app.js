@@ -1,13 +1,13 @@
-const express = require("express");
+const express = require('express');
 const path = require('path');
-const cors = require("cors");
+const cors = require('cors');
 const helmet = require('helmet');
-const xss = require('xss');
-const routes = require("./route");
+// const xss = require("xss");
 const userRoutes = require('./routes/userRoutes');
+const patientRoutes = require('./routes/patientRoutes');
+const viewRooutes = require('./routes/viewRoutes');
 
 const app = express();
-const port = parseInt(process.env.PORT);
 
 // Middlewares
 // Serving static files
@@ -26,11 +26,21 @@ app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 app.use(cors());
 
 app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).send('Something broke!');
+  console.error(err);
+  res.status(500).send('Something broke!');
 });
 
-app.use("/", routes); // 라우팅 로직을 적용
-app.use("/api/v1/users", userRoutes);
+// Routes
+app.use('/', viewRooutes); // 라우팅 로직을 적용
+app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/patients', patientRoutes);
+
+app.all('*', (req, res, next) => {
+  res.status(404).json({
+    status: 'fail',
+    message: `Can't find ${req.originalUrl} on this server!`,
+  });
+  next();
+});
 
 module.exports = app;
