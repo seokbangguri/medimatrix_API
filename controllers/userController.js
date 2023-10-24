@@ -99,6 +99,36 @@ exports.updateData = async (req, res, next) => {
   }
 };
 
+exports.getAllTherapists = async (req, res) => {
+  try {
+    const { hospital } = req.params;
+
+    // MySQL database connection
+    const connection = await pool.getConnection();
+
+    const [therapists] = await connection.execute(
+      'SELECT * FROM therapists WHERE hospital = ?',
+      [hospital],
+    );
+
+    connection.release();
+
+    res.status(200).json({
+      status: 'success',
+      results: therapists.length,
+      data: {
+        data: therapists,
+      },
+    });
+  } catch (error) {
+    console.log('Error', error);
+    res.status(500).json({
+      status: 'fail',
+      message: error.message,
+    });
+  }
+};
+
 exports.getUser = async (req, res, next) => {
   const user = {
     name: 'Usmon',
