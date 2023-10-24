@@ -101,14 +101,14 @@ exports.updateData = async (req, res, next) => {
 
 exports.getAllTherapists = async (req, res) => {
   try {
-    const { hospital } = req.params;
+    const hospital = req.params.hospital || null;
 
     // MySQL database connection
     const connection = await pool.getConnection();
 
     const [therapists] = await connection.execute(
       'SELECT * FROM therapists WHERE hospital = ?',
-      [hospital],
+      [hospital || null],
     );
 
     connection.release();
