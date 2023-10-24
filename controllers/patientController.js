@@ -34,6 +34,7 @@ exports.patientE = async (req, res) => {
       });
     } else {
       // 사용자를 찾을 수 없을 경우 적절한 응답을 보냅니다.// 데이터베이스에 회원 정보 추가
+      // eslint-disable-next-line no-unused-vars
       const [result] = await connection.execute(
         `INSERT INTO patients (patientNo, name, sex, hospital, therapists) VALUES (?,?,?,?,?)`,
         [id, name, sex, hospital, therapists],
@@ -93,6 +94,7 @@ exports.loadPatientData = async (req, res) => {
       res.status(400).json({ error: '필수 정보가 누락되었습니다.' });
       return;
     }
+    // eslint-disable-next-line no-unused-vars
     const user = null;
 
     const connection = await pool.getConnection();
