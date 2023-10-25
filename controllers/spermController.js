@@ -17,6 +17,4 @@ async function pythonVideo(req, res) {
     });
 }
 
-module.exports = {
-    pythonVideo,
-}
+module.exports = pythonVideo;
