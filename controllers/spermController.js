@@ -7,12 +7,17 @@ async function pythonVideo(req, res) {
     }
   
     const uploadedFile = req.files.file;
+    const pythonFilePath = '/home/vmadmin/python/testVideo.py';
 
     // Python 스크립트 호출
-    const pythonProcess = spawn('python', ['your_python_script.py', uploadedFile]);
+    const pythonProcess = spawn('python', [ pythonFilePath, uploadedFile]);
   
     // Python 스크립트의 출력을 응답으로 전송
     pythonProcess.stdout.on('data', (data) => {
       res.send(data.toString());
     });
+}
+
+module.exports = {
+    pythonVideo,
 }
