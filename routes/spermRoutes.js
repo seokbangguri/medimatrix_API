@@ -3,4 +3,4 @@ const spermController = require('../controllers/spermController');
 
 const router = express.Router();
 
-router.get('/testpython', spermController.pythonVideo);
+router.post('/testpython', spermController.pythonVideo);
