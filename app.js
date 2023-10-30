@@ -3,6 +3,7 @@ const path = require('path');
 const cors = require('cors');
 const helmet = require('helmet');
 const { spawn } = require('child_process');
+// const ffmpeg = require('fluent-ffmpeg');
 // const xss = require("xss");
 const userRoutes = require('./routes/userRoutes');
 const patientRoutes = require('./routes/patientRoutes');
@@ -41,25 +42,37 @@ app.use('/api/v1/patients', patientRoutes);
 
 app.post('/test', (req, res) => {
   if (!req.files || !req.files.file) {
-    return res.status(400).send('No files were uploaded.');
+    return res.status(400).send('파일이 업로드되지 않았습니다.');
   }
 
-  const pythonFilePath = './testVideo.py';
   const uploadedFile = req.files.file;
 
-  // Python 스크립트 호출
-  const pythonProcess = spawn('python3', [ pythonFilePath ], {
-    stdio: ['pipe', 'pipe', 'pipe', 'ipc']
-  });
+  // 사용자가 업로드한 파일의 확장자를 확인
+  const fileExtension = uploadedFile.name.split('.').pop().toLowerCase();
 
-  // 동영상 파일 데이터를 Python 스크립트로 전송
-  pythonProcess.stdin.write(uploadedFile.data);
-  pythonProcess.stdin.end();
-  // Python 스크립트의 출력을 응답으로 전송
-  pythonProcess.stdout.on('data', (data) => {
-    res.send(data.toString());
-  });
+  // 지원하는 동영상 확장자 목록
+  const supportedVideoFormats = ['mp4', 'avi', 'mov', 'mkv', /* 기타 지원하는 확장자들 */];
+
+  // 지원하는 동영상 확장자인지 확인
+  if (supportedVideoFormats.includes(fileExtension)) {
+    // 동영상 파일의 포맷이 올바르다면 Python 스크립트 호출
+    const pythonFilePath = './testVideo.py';
+    const AImodule1 = spawn('python3', [pythonFilePath], {
+      stdio: ['pipe', 'pipe', 'pipe', 'ipc']
+    });
+
+    AImodule1.stdin.write(uploadedFile.data);
+    AImodule1.stdin.end();
+
+    AImodule1.stdout.on('data', (data) => {
+      console.log(data.toString('utf-8'));
+      res.status(200).send(JSON.parse(data));
+    });
+  } else {
+    res.status(400).send('지원하지 않는 비디오 포맷입니다.');
+  }
 });
+
 
 app.all('*', (req, res, next) => {
   res.status(404).json({
