@@ -51,7 +51,7 @@ exports.SpermVideosAnalyze = (req, res) => {
     AImodule1.on('close', async () => {
         try {
             // 영상파일 삭제
-            await fs.remove(directoryPath);
+//            await fs.remove(directoryPath);
             console.log(directoryPath + '삭제완료');
             // 성공 내역 response
             res.status(200).send(responseFromPython);
