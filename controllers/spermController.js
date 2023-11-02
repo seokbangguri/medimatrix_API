@@ -11,12 +11,17 @@ exports.SpermVideosAnalyze = (req, res) => {
   
     // 사용자가 업로드한 파일의 확장자를 확인
     uploadedFile.forEach(file => {
-      const arr = file.name.split("-");
+      let arr = '';
       const fileFormat = file.name.split('.').pop().toLowerCase();
-      const supportedVideoFormats = ['mp4' /* 기타 지원하는 확장자들 */];
+      const supportedVideoFormats = ['mp4', 'csv' /* 기타 지원하는 확장자들 */];
+      if(fileFormat === 'mp4') {
+        arr = file.name.split("-");
+      } else if(fileFormat === 'csv') {
+        arr = file.name.split("_");
+      }
   
       if(supportedVideoFormats.includes(fileFormat)) {
-        directoryPath = `./videos/${arr[0]}/`;
+        directoryPath = `./files/${arr[0]}/`;
   
         if (!fs.existsSync(directoryPath)) {
           fs.mkdirSync(directoryPath, { recursive: true });
@@ -35,7 +40,8 @@ exports.SpermVideosAnalyze = (req, res) => {
       }
     });
     
-    const pythonFilePath = './testVideo.py';
+    // const pythonFilePath = './testVideo.py';
+    const pythonFilePath = './python/test.py';
     const AImodule1 = spawn('python3', [pythonFilePath], {
       stdio: ['pipe', 'pipe', 'pipe', 'ipc']
     });
@@ -51,8 +57,8 @@ exports.SpermVideosAnalyze = (req, res) => {
     AImodule1.on('close', async () => {
         try {
             // 영상파일 삭제
-//            await fs.remove(directoryPath);
-            console.log(directoryPath + '삭제완료');
+            // await fs.remove(directoryPath);
+            // console.log(directoryPath + '삭제완료');
             // 성공 내역 response
             res.status(200).send(responseFromPython);
         } catch (err) {
