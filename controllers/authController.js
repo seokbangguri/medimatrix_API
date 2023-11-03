@@ -95,7 +95,7 @@ async function signin(req, res) {
         // 비밀번호가 일치하지 않는 경우
         res
           .status(401)
-          .json({ error: '유효하지 않은 이메일 또는 비밀번호입니다.' });
+          .json({ message: '유효하지 않은 이메일 또는 비밀번호입니다.' });
       }
     } else {
       // 사용자를 찾을 수 없는 경우

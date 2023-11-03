@@ -21,7 +21,7 @@ exports.SpermVideosAnalyze = (req, res) => {
       }
   
       if(supportedVideoFormats.includes(fileFormat)) {
-        directoryPath = `./files/${arr[0]}/`;
+        directoryPath = `../files/${arr[0]}/`;
   
         if (!fs.existsSync(directoryPath)) {
           fs.mkdirSync(directoryPath, { recursive: true });
@@ -41,13 +41,13 @@ exports.SpermVideosAnalyze = (req, res) => {
     });
     
     // const pythonFilePath = './testVideo.py';
-    const pythonFilePath = './python/test.py';
-    const AImodule1 = spawn('python3', [pythonFilePath], {
+    const pythonFilePath = '../python/module1_test.py';
+    const AImodule1 = spawn('python3', [pythonFilePath, directoryPath], {
       stdio: ['pipe', 'pipe', 'pipe', 'ipc']
     });
   
-    AImodule1.stdin.write(directoryPath);
-    AImodule1.stdin.end();
+    // AImodule1.stdin.write(directoryPath);
+    // AImodule1.stdin.end();
   
     let responseFromPython = '';
     AImodule1.stdout.on('data', (data) => {
