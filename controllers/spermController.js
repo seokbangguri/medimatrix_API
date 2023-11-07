@@ -45,10 +45,18 @@ exports.SpermVideosAnalyze = (req, res) => {
   exec(`python3 ../python/module1_test.py ${directoryPath}`, (error, stdout, stderr) => {
     if (error) {
       console.error(`Error: ${error.message}`);
-      return res.status(400).send(directoryPath + ': 파이썬 코드 에러');;
+      return res.status(400).send(directoryPath + ': 파이썬 코드 에러');
     }
+
+    const outputLines = stdout.split('\n');
+    const lastOutputLine = outputLines[outputLines.length - 1];
+
     console.log(`Python Output: ${stdout}`);
     // stdout을 클라이언트로 응답으로 전송
-    res.json({ pythonOutput: stdout });
+    fs.remove(directoryPath, err => {
+      if (err) return console.error(err)
+      console.log('파일 삭제 완료!')
+    })
+    res.status(200).json({ pythonOutput: lastOutputLine });
   });
 };
