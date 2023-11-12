@@ -8,7 +8,7 @@ const saltRounds = parseInt(process.env.HASH_SALT, 10);
 // 토큰 생성
 const generateToken = (payload) =>
   // payload는 토큰에 담을 정보 (예: 사용자 정보 등)
-  jwt.sign(payload, jwtSecret, { expiresIn: '1h' }); // 토큰 만료 시간: 1시간
+  jwt.sign(payload, jwtSecret, { expiresIn: '5h' }); // 토큰 만료 시간: 1시간
 // 토큰 검증
 async function verifyToken(req, res) {
   try {

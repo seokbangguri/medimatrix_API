@@ -42,21 +42,30 @@ exports.SpermVideosAnalyze = (req, res) => {
   });
 
   // Python 코드 실행
-  exec(`python3 ../python/module1_test.py ${directoryPath}`, (error, stdout, stderr) => {
+  // exec(`python3 ../python/module1_test.py ${directoryPath}`, (error, stdout, stderr) => {
+  exec(`python3 ../python_test/list_patient.py ${directoryPath}`, (error, stdout, stderr) => {
     if (error) {
       console.error(`Error: ${error.message}`);
       return res.status(400).send(directoryPath + ': 파이썬 코드 에러');
     }
 
     const outputLines = stdout.split('\n');
-    const lastOutputLine = outputLines[outputLines.length - 1];
+    const spermCounts = outputLines[outputLines.length - 2];
+    const spermSpeedsDistances = outputLines[outputLines.length - 3]
 
     console.log(`Python Output: ${stdout}`);
     // stdout을 클라이언트로 응답으로 전송
     fs.remove(directoryPath, err => {
       if (err) return console.error(err)
       console.log('파일 삭제 완료!')
-    })
-    res.status(200).json({ pythonOutput: lastOutputLine });
+    });
+    res.status(200).json({ 
+      status: 'success',
+      data: {
+        pythonOutput: spermSpeedsDistances,
+        count: spermCounts
+        // count: outputLines
+      }
+     });
   });
 };
