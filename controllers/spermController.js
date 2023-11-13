@@ -43,7 +43,7 @@ exports.SpermVideosAnalyze = (req, res) => {
 
   // Python 코드 실행
   // exec(`python3 ../python/module1_test.py ${directoryPath}`, (error, stdout, stderr) => {
-  exec(`python3 ../python_test/list_patient.py ${directoryPath}`, (error, stdout, stderr) => {
+  exec(`python3 ../python/list_patient.py ${directoryPath}`, (error, stdout, stderr) => {
     if (error) {
       console.error(`Error: ${error.message}`);
       return res.status(400).send(directoryPath + ': 파이썬 코드 에러');
