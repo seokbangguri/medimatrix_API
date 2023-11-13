@@ -59,13 +59,6 @@ exports.SpermVideosAnalyze = (req, res) => {
       if (err) return console.error(err)
       console.log('파일 삭제 완료!')
     });
-    res.status(200).json({ 
-      status: 'success',
-      data: {
-        pythonOutput: spermSpeedsDistances,
-        count: spermCounts
-        // count: outputLines
-      }
-     });
+    res.status(200).json({ data: spermCounts });
   });
 };
