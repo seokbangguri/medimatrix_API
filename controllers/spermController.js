@@ -47,18 +47,46 @@ exports.SpermVideosAnalyze = (req, res) => {
     if (error) {
       console.error(`Error: ${error.message}`);
       return res.status(400).send(directoryPath + ': 파이썬 코드 에러');
+    } else {
+      const outputLines = stdout.split('\n');
+      const spermCounts = outputLines[outputLines.length - 2];
+      const spermSpeedsDistances = outputLines[outputLines.length - 3]
+
+      console.log(`Python Output: ${stdout}`);
+      // stdout을 클라이언트로 응답으로 전송
+      fs.remove(directoryPath, err => {
+        if (err) return console.error(err)
+        console.log('파일 삭제 완료!')
+      });
+      res.status(200).json({ data: spermCounts });
     }
+  });
+};
 
-    const outputLines = stdout.split('\n');
-    const spermCounts = outputLines[outputLines.length - 2];
-    const spermSpeedsDistances = outputLines[outputLines.length - 3]
+exports.getChromosome = (req, res) => {
+  exec("python3 ../tracking_video/module_test/module_4.py 2>&1 | tee -a ../tracking_video/module_test/module4.log", (error, stdout, stderr) => {
+    if(error) {
+      console.error(`Error: ${error.message}`);
+      return res.status(400).send('module4 파이썬 코드 에러');
+    } else {
+      const output = stdout.split('\n');
+      const accAuc = output[output.length - 2];
+      console.log(`Python Output: ${stdout}`);
+      res.status(200).json(JSON.parse(accAuc));
+    }
+  });
+};
 
-    console.log(`Python Output: ${stdout}`);
-    // stdout을 클라이언트로 응답으로 전송
-    fs.remove(directoryPath, err => {
-      if (err) return console.error(err)
-      console.log('파일 삭제 완료!')
-    });
-    res.status(200).json({ data: spermCounts });
+exports.getInfertility = (req, res) => {
+  exec("python3 ../tracking_video/module_test/module_5.py 2>&1 | tee -a ../tracking_video/module_test/module5.log", (error, stdout, stderr) => {
+    if(error) {
+      console.error(`Error: ${error.message}`);
+      return res.status(400).send('module5 파이썬 코드 에러');
+    } else {
+      const output = stdout.split('\n');
+      const accAuc = output[output.length - 2];
+      console.log(`Python Output: ${stdout}`);
+      res.status(200).json(JSON.parse(accAuc));
+    }
   });
 };
