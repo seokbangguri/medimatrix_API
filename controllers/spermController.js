@@ -1,5 +1,6 @@
 // const { spawn } = require('child_process');
 const { exec } = require('child_process');
+const { dir } = require('console');
 const fs = require('fs-extra');
 
 exports.SpermVideosAnalyze = (req, res) => {
@@ -23,6 +24,7 @@ exports.SpermVideosAnalyze = (req, res) => {
 
     if (supportedVideoFormats.includes(fileFormat)) {
       directoryPath = `../files/${arr[0]}/`;
+      console.log(directoryPath);
 
       if (!fs.existsSync(directoryPath)) {
         fs.mkdirSync(directoryPath, { recursive: true });
@@ -31,7 +33,7 @@ exports.SpermVideosAnalyze = (req, res) => {
       const filePath = `${directoryPath}${file.name}`;
       file.mv(filePath, err => {
         if (err) {
-          console.log('file save error', err);
+          console.error('file save error', err);
           return res.status(500).send('파일 저장 중 에러발생.');
         }
       })
@@ -49,16 +51,16 @@ exports.SpermVideosAnalyze = (req, res) => {
       return res.status(400).send(directoryPath + ': 파이썬 코드 에러');
     } else {
       const outputLines = stdout.split('\n');
-      const spermCounts = outputLines[outputLines.length - 2];
-      const spermSpeedsDistances = outputLines[outputLines.length - 3]
+      const chromosomePer = outputLines[outputLines.length - 3];
+      const intfertilityPer = outputLines[outputLines.length - 2];
+      const spermCounts = outputLines[outputLines.length - 4];
 
       console.log(`Python Output: ${stdout}`);
       // stdout을 클라이언트로 응답으로 전송
       fs.remove(directoryPath, err => {
         if (err) return console.error(err)
-        console.log('파일 삭제 완료!')
       });
-      res.status(200).json({ data: spermCounts });
+      res.status(200).json({ data: spermCounts, per: {chromosome: chromosomePer, intfertility: intfertilityPer} });
     }
   });
 };
@@ -71,7 +73,6 @@ exports.getChromosome = (req, res) => {
     } else {
       const output = stdout.split('\n');
       const accAuc = output[output.length - 2];
-      console.log(`Python Output: ${stdout}`);
       res.status(200).json(JSON.parse(accAuc));
     }
   });
@@ -85,7 +86,6 @@ exports.getInfertility = (req, res) => {
     } else {
       const output = stdout.split('\n');
       const accAuc = output[output.length - 2];
-      console.log(`Python Output: ${stdout}`);
       res.status(200).json(JSON.parse(accAuc));
     }
   });
