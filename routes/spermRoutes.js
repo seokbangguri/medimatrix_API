@@ -6,7 +6,7 @@ const spermController = require('../controllers/spermController');
 
 
 router.post('/spermVideos', spermController.SpermVideosAnalyze);
-router.post('/getChromosome', spermController.getChromosome);
-router.post('/getInfertility', spermController.getInfertility);
+router.get('/getChromosome', spermController.getChromosome);
+router.get('/getInfertility', spermController.getInfertility);
 
 module.exports = router;
