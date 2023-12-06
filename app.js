@@ -2,16 +2,13 @@ const express = require('express');
 const path = require('path');
 const cors = require('cors');
 const helmet = require('helmet');
-const { spawn } = require('child_process');
-const fs = require('fs');
 // const ffmpeg = require('fluent-ffmpeg');
 // const xss = require("xss");
+const fileUpload = require('express-fileupload');
 const userRoutes = require('./routes/userRoutes');
 const patientRoutes = require('./routes/patientRoutes');
 const viewRooutes = require('./routes/viewRoutes');
 const spermRoutes = require('./routes/spermRoutes');
-
-const fileUpload = require('express-fileupload');
 
 const app = express();
 app.use(fileUpload());
