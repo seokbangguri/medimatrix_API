@@ -16,18 +16,18 @@ const generateToken = (payload) => {
 // 토큰 검증
 async function verifyToken(req, res) {
   try {
-    const { token } = req.body;
-    if (token == null) {
-      console.error('Token is missing in the request body.');
-      res.status(400).json({ error: 'There is no token.' });
-    } else {
-      const decoded = jwt.verify(token, jwtSecret);
-      const { email, name, hospitalName, role, exp, iat } = decoded;
-      console.log('Token decoded successfully:', decoded);
-      res
-        .status(200)
-        .json({ decoded: { email, name, hospitalName, role, exp, iat } });
+    const token = req.headers['x-auth-token'];
+
+    if (!token) {
+      res.status(401).json({ error: 'There is no token.' });
     }
+
+    const decoded = jwt.verify(token, jwtSecret);
+    const { email, name, hospitalName, role, exp, iat } = decoded;
+
+    res
+      .status(200)
+      .json({ decoded: { email, name, hospitalName, role, exp, iat } });
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
       console.error('Token expired:', error.message);
@@ -94,7 +94,6 @@ async function signin(req, res) {
           status: 'success',
           message: '로그인 성공',
           user: userData,
-          token,
         });
       }
     }
@@ -174,7 +173,7 @@ async function signup(req, res) {
       res
         .status(201)
         .header('x-auth-token', token)
-        .json({ status: 'success', message: '회원가입 성공', token });
+        .json({ status: 'success', message: '회원가입 성공' });
     } catch (error) {
       await connection.rollback();
       throw error;

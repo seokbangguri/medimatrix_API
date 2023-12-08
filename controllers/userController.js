@@ -8,7 +8,7 @@ exports.loadUserData = async (req, res, next) => {
   try {
     const { email, role } = req.body;
     // 필드 값이 null 또는 undefined인 경우 에러 반환
-    if (email == null || role == null) {
+    if (!email || !role) {
       res.status(400).json({ error: '필수 정보가 누락되었습니다.' });
       return;
     }
@@ -55,13 +55,7 @@ exports.updateData = async (req, res, next) => {
   try {
     const { email, name, hospitalName, phoneNumber, role } = req.body;
     // 필드 값이 null 또는 undefined인 경우 에러 반환
-    if (
-      name == null ||
-      email == null ||
-      hospitalName == null ||
-      phoneNumber == null ||
-      role == null
-    ) {
+    if (!name || !email || !hospitalName || !phoneNumber || !role) {
       res.status(400).json({ error: '필수 정보가 누락되었습니다.' });
       return;
     }
@@ -88,7 +82,8 @@ exports.updateData = async (req, res, next) => {
       const token = generateToken(userData);
       res
         .status(200)
-        .json({ message: '사용자 데이터 업데이트 성공', token: token });
+        .header('x-auth-token', token)
+        .json({ status: 'success', message: '사용자 데이터 업데이트 성공' });
     } else {
       // 업데이트가 실패한 경우 (해당 이메일을 가진 사용자를 찾을 수 없음)
       res.status(404).json({ error: '사용자를 찾을 수 없습니다.' });
