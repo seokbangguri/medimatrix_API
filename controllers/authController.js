@@ -16,7 +16,7 @@ const generateToken = (payload) => {
 // 토큰 검증
 async function verifyToken(req, res) {
   try {
-    const token = req.headers['x-auth-token'];
+    const { token } = req.body;
 
     if (!token) {
       return res.status(401).json({ error: 'There is no token.' });
