@@ -90,11 +90,12 @@ async function signin(req, res) {
         };
 
         const token = generateToken(userData);
-        return res
-          .status(200)
-          .headers('x-auth-token', token)
-          .send(true)
-          .json({ message: '로그인 성공', user: userData, token });
+        return res.status(200).header('x-auth-token', token).json({
+          status: 'success',
+          message: '로그인 성공',
+          user: userData,
+          token,
+        });
       }
     }
 
@@ -172,9 +173,8 @@ async function signup(req, res) {
       // Registration success
       res
         .status(201)
-        .headers('x-auth-token', token)
-        .send(true)
-        .json({ message: '회원가입 성공', token });
+        .header('x-auth-token', token)
+        .json({ status: 'success', message: '회원가입 성공', token });
     } catch (error) {
       await connection.rollback();
       throw error;
