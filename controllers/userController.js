@@ -77,10 +77,11 @@ exports.updateData = async (req, res, next) => {
         role: role,
       };
       const token = generateToken(userData);
-      res
-        .status(200)
-        .header('x-auth-token', token)
-        .json({ status: 'success', message: '사용자 데이터 업데이트 성공' });
+      res.status(200).json({
+        status: 'success',
+        message: '사용자 데이터 업데이트 성공',
+        token: token,
+      });
     } else {
       // 업데이트가 실패한 경우 (해당 이메일을 가진 사용자를 찾을 수 없음)
       res.status(404).json({ error: '사용자를 찾을 수 없습니다.' });

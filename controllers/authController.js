@@ -90,7 +90,7 @@ async function signin(req, res) {
         };
 
         const token = generateToken(userData);
-        return res.status(200).set('x-auth-token', token).json({
+        return res.status(200).json({
           status: 'success',
           message: '로그인 성공',
           user: userData,
@@ -173,8 +173,7 @@ async function signup(req, res) {
       // Registration success
       res
         .status(201)
-        .header('x-auth-token', token)
-        .json({ status: 'success', message: '회원가입 성공' });
+        .json({ status: 'success', message: '회원가입 성공', token: token });
     } catch (error) {
       await connection.rollback();
       throw error;
