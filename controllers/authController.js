@@ -90,10 +90,11 @@ async function signin(req, res) {
         };
 
         const token = generateToken(userData);
-        return res.status(200).header('x-auth-token', token).json({
+        return res.status(200).set('x-auth-token', token).json({
           status: 'success',
           message: '로그인 성공',
           user: userData,
+          token: token,
         });
       }
     }
