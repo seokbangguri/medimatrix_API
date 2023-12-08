@@ -19,26 +19,26 @@ async function verifyToken(req, res) {
     const token = req.headers['x-auth-token'];
 
     if (!token) {
-      res.status(401).json({ error: 'There is no token.' });
+      return res.status(401).json({ error: 'There is no token.' });
     }
 
     const decoded = jwt.verify(token, jwtSecret);
     const { email, name, hospitalName, role, exp, iat } = decoded;
 
-    res
+    return res
       .status(200)
       .json({ decoded: { email, name, hospitalName, role, exp, iat } });
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
       console.error('Token expired:', error.message);
-      res.status(401).json({ error: '토큰이 만료되었습니다.' });
-    } else if (error instanceof jwt.JsonWebTokenError) {
-      console.error('Invalid token:', error.message);
-      res.status(401).json({ error: '유효하지 않은 토큰입니다.' });
-    } else {
-      console.error('Unexpected error:', error.message);
-      res.status(400).json({ error: '에러가 발생했습니다.' });
+      return res.status(401).json({ error: '토큰이 만료되었습니다.' });
     }
+    if (error instanceof jwt.JsonWebTokenError) {
+      console.error('Invalid token:', error.message);
+      return res.status(401).json({ error: '유효하지 않은 토큰입니다.' });
+    }
+    console.error('Unexpected error:', error.message);
+    return res.status(400).json({ error: '에러가 발생했습니다.' });
   }
 }
 
