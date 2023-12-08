@@ -53,18 +53,32 @@ async function signin(req, res) {
 
     const connection = await pool.getConnection();
 
-    // Combine SQL queries
-    const [results] = await connection.execute(
-      'SELECT * FROM therapists WHERE email = ? UNION SELECT * FROM administrators WHERE email = ?',
-      [email, email],
+    const [therapists] = await connection.execute(
+      'SELECT * FROM therapists WHERE email = ?',
+      [email],
+    );
+
+    // administrators 테이블에서 이메일로 사용자 정보 검색
+    const [administrators] = await connection.execute(
+      'SELECT * FROM administrators WHERE email = ?',
+      [email],
     );
 
     connection.release();
+    let user = null;
+    let role = '';
 
-    if (results.length > 0) {
-      const user = results[0];
-      const role = results.length > 1 ? 'administrators' : 'therapists';
+    if (therapists.length > 0) {
+      // therapists 테이블에서 사용자 발견
+      user = therapists[0];
+      role = 'therapists';
+    } else if (administrators.length > 0) {
+      // administrators 테이블에서 사용자 발견
+      user = administrators[0];
+      role = 'administrators';
+    }
 
+    if (user) {
       const passwordMatch = await bcrypt.compare(password, user.password);
 
       if (passwordMatch) {
@@ -78,6 +92,8 @@ async function signin(req, res) {
         const token = generateToken(userData);
         return res
           .status(200)
+          .headers('x-auth-token', token)
+          .send(true)
           .json({ message: '로그인 성공', user: userData, token });
       }
     }
@@ -112,13 +128,18 @@ async function signup(req, res) {
 
     try {
       // Check for duplicate email in both tables
-      const [existingUsers] = await connection.execute(
-        'SELECT * FROM therapists WHERE email = ? UNION SELECT * FROM administrators WHERE email = ?',
-        [email, email],
+      const [existingTherapist] = await connection.execute(
+        'SELECT * FROM therapists WHERE email = ?',
+        [email],
+      );
+      const [existingAdmin] = await connection.execute(
+        'SELECT * FROM administrators WHERE email = ?',
+        [email],
       );
 
-      if (existingUsers.length > 0) {
-        return res.status(400).json({ error: '중복된 이메일입니다.' });
+      if (existingTherapist.length > 0 || existingAdmin.length > 0) {
+        // 중복된 이메일이 이미 존재하는 경우
+        res.status(400).json({ error: '중복된 이메일입니다.' });
       }
 
       // Hash password asynchronously
@@ -131,8 +152,8 @@ async function signup(req, res) {
       await connection.execute(
         // eslint-disable-next-line prettier/prettier
         `INSERT INTO ${role === 'administrators'
-          ? 'administrators (name, email, password, hospital, hp) VALUES (?, ?, ?, ?, ?)'
-          : 'therapists (name, email, password, hospital, hp) VALUES (?, ?, ?, ?, ?)'
+            ? 'administrators (name, email, password, hospital, hp) VALUES (?, ?, ?, ?, ?)'
+            : 'therapists (name, email, password, hospital, hp) VALUES (?, ?, ?, ?, ?)'
         }`,
         [name, email, hash, hospitalName, phoneNumber],
       );
@@ -149,7 +170,11 @@ async function signup(req, res) {
       const token = generateToken(userData);
 
       // Registration success
-      res.status(201).json({ message: '회원가입 성공', token });
+      res
+        .status(201)
+        .headers('x-auth-token', token)
+        .send(true)
+        .json({ message: '회원가입 성공', token });
     } catch (error) {
       await connection.rollback();
       throw error;
