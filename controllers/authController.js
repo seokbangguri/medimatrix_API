@@ -33,10 +33,10 @@ async function verifyToken(req, res) {
       console.error('Token expired:', error.message);
       return res.status(401).json({ error: '토큰이 만료되었습니다.' });
     }
-    if (error instanceof jwt.JsonWebTokenError) {
-      console.error('Invalid token:', error.message);
-      return res.status(401).json({ error: '유효하지 않은 토큰입니다.' });
-    }
+    // if (error instanceof jwt.JsonWebTokenError) {
+    //   console.error('Invalid token:', error.message);
+    //   return res.status(401).json({ error: '유효하지 않은 토큰입니다.' });
+    // }
     console.error('Unexpected error:', error.message);
     return res.status(400).json({ error: '에러가 발생했습니다.' });
   }

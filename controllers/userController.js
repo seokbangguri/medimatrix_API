@@ -9,8 +9,7 @@ exports.loadUserData = async (req, res, next) => {
     const { email, role } = req.body;
     // 필드 값이 null 또는 undefined인 경우 에러 반환
     if (!email || !role) {
-      res.status(400).json({ error: '필수 정보가 누락되었습니다.' });
-      return;
+      return res.status(400).json({ error: '필수 정보가 누락되었습니다.' });
     }
     let user = null;
 
@@ -32,18 +31,16 @@ exports.loadUserData = async (req, res, next) => {
 
     if (user != null) {
       // 사용자 데이터를 클라이언트로 응답으로 보냅니다.
-      res.status(200).json({
+      return res.status(200).json({
         email: user.email,
         name: user.name,
         hospitalName: user.hospital,
         phoneNumber: user.hp,
       });
-    } else {
-      // 사용자를 찾을 수 없을 경우 적절한 응답을 보냅니다.
-      res.status(404).json({ error: '사용자를 찾을 수 없습니다.' });
     }
-
+    // 사용자를 찾을 수 없을 경우 적절한 응답을 보냅니다.
     connection.release();
+    return res.status(404).json({ error: '사용자를 찾을 수 없습니다.' });
   } catch (error) {
     console.error('에러', error);
     res.status(500).json({ error: '데이터 불러오기 실패' });
